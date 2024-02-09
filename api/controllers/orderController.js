@@ -16,8 +16,11 @@ module.exports = {
 
             try {
                 const sql = `INSERT INTO orders (car_id,user_id,totalprice,date,paymentintent,orderstatus) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`
-
+                
                 result = await pool.query(sql, [car_id, user_id, price, date, id, status]);
+                
+                const sql2= `UPDATE cars SET carstatus = 'sold' WHERE car_id = $1 AND condition = 2`
+                result2 = await pool.query(sql2, [car_id]);
                 resolve(result.rows[0])
 
             } catch (error) {
@@ -96,7 +99,7 @@ module.exports = {
                 const sql = `SELECT EXISTS (
                     SELECT 1
                     FROM orders
-                    WHERE user_id = $1 AND car_id = $2 AND orderstatus = 'Delivered'
+                    WHERE (user_id = $1 AND car_id = $2) AND orderstatus = 'Payment Succeeded'
                 );`
                 result = await pool.query(sql, [user_id, car_id]);
                 resolve(result.rows[0].exists)
