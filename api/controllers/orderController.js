@@ -50,7 +50,7 @@ module.exports = {
         return new Promise(async function (resolve, reject) {
             const order_id = req.params.id
             try {
-                const sql = `UPDATE orders SET orderstatus = 'Cancelled By User' WHERE order_id = $1`
+                const sql = `UPDATE orders SET orderstatus = 'Cancelled' WHERE order_id = $1`
                 result = await pool.query(sql, [order_id]);
                 resolve(result.rows)
 
@@ -167,7 +167,7 @@ module.exports = {
     SalesGraph: function (req) {
         return new Promise(async function (resolve, reject) {
             try {
-                const sql = `SELECT date, totalprice FROM orders`
+                const sql = `SELECT date, totalprice FROM orders ORDER BY date ASC`
                 result = await pool.query(sql);
                 resolve(result.rows)
             } catch (error) {
